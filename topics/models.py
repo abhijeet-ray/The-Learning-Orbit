@@ -1,26 +1,57 @@
+# topics/models.py
 from django.db import models
 
-# This model defines the structure for a learning topic.
 class Topic(models.Model):
+    # These fields remain as they describe the topic itself.
     title = models.CharField(max_length=200)
     grade_level = models.CharField(max_length=50)
     subject = models.CharField(max_length=50)
-    content_body = models.TextField()
     badge_name = models.CharField(max_length=100, default="Knowledge Seeker")
+    is_featured = models.BooleanField(default=False)
+    
+    # We are removing content_body, image_url, and reverse_engineer_challenge.
+    # They will now be handled by ContentBlocks.
 
     def __str__(self):
-        # This makes the admin panel more readable.
         return self.title
 
-# This model defines the structure for a quiz question.
+# NEW: This is our flexible content block model.
+class ContentBlock(models.Model):
+    # Each block belongs to a single topic.
+    topic = models.ForeignKey(Topic, related_name='content_blocks', on_delete=models.CASCADE)
+
+    # Define the types of blocks we can have.
+    BLOCK_TYPES = [
+        ('heading', 'Heading'),
+        ('paragraph', 'Paragraph'),
+        ('image', 'Image'),
+        ('sandbox_greenhouse', 'Sandbox: Virtual Greenhouse'),
+        ('quiz', 'Quiz'),
+        ('challenge', 'Reverse-Engineer Challenge'),
+    ]
+    block_type = models.CharField(max_length=20, choices=BLOCK_TYPES)
+
+    # A field to control the order of the blocks on the page.
+    order = models.PositiveIntegerField(default=0)
+
+    # Fields to store the content for each block type.
+    # Most will be optional (blank=True, null=True).
+    text_content = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='topic_images/', blank=True, null=True)
+
+    # This helps order the blocks correctly in the admin panel and on the page.
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.topic.title} - Block {self.order} ({self.get_block_type_display()})"
+
+
+# The QuizQuestion model remains, as it's a distinct part of the Quiz block.
 class QuizQuestion(models.Model):
-    # This links each question to a specific Topic.
-    # If a Topic is deleted, all its questions are also deleted.
     topic = models.ForeignKey(Topic, related_name='questions', on_delete=models.CASCADE)
     question_text = models.CharField(max_length=255)
-    # We'll store choices as text separated by a pipe '|', e.g., "Choice A|Choice B|Choice C"
     choices = models.CharField(max_length=255) 
-    # The correct choice will be stored as a number (0 for the first choice, 1 for the second, etc.)
     correct_choice = models.PositiveSmallIntegerField()
 
     def __str__(self):

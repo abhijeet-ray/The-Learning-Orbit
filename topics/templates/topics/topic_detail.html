@@ -1,42 +1,134 @@
 <!-- topics/templates/topics/topic_detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ topic.title }} - The Learning Orbit</title>
-    <!-- This script loads Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans">
+{% extends "topics/base.html" %}
 
-    <div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+{% block title %}{{ topic.title }} - The Learning Orbit{% endblock %}
 
-        <!-- Header Section -->
-        <div class="border-b pb-4 mb-6">
-            <h1 class="text-4xl font-bold text-gray-800">{{ topic.title }}</h1>
-            <p class="text-lg text-gray-500 mt-2">
-                <span class="font-semibold">{{ topic.subject }}</span> | 
-                <span class="font-semibold">{{ topic.grade_level }}</span>
-            </p>
-        </div>
-
-        <!-- Main Content Body -->
-        <div class="prose max-w-none text-gray-700">
-            <!-- The 'safe' filter is important for rendering HTML content from the database securely -->
-            {{ topic.content_body|safe }}
-        </div>
-
-        <!-- Badge Section -->
-        <div class="mt-8 pt-4 border-t">
-            <p class="text-md text-gray-600">
-                Complete this topic to earn the 
-                <span class="font-bold text-blue-600 py-1 px-2 bg-blue-100 rounded-md">🏆 {{ topic.badge_name }}</span> 
-                badge!
-            </p>
-        </div>
-
+{% block content %}
+<div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    
+    <!-- Topic Header -->
+    <div class="border-b pb-4 mb-10">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800">{{ topic.title }}</h1>
+        <p class="text-lg text-gray-500 mt-2">
+            <span class="font-semibold">{{ topic.subject }}</span> | 
+            <span class="font-semibold">{{ topic.grade_level }}</span>
+        </p>
     </div>
 
-</body>
-</html>
+    <!-- Main Content Block Renderer -->
+    <div class="space-y-8">
+        {% for block in content_blocks %}
+            
+            <!-- RENDER: Heading Block -->
+            {% if block.block_type == 'heading' %}
+                <h2 class="text-3xl font-bold text-gray-800 border-b pb-3">{{ block.text_content }}</h2>
+            
+            <!-- RENDER: Paragraph Block -->
+            {% elif block.block_type == 'paragraph' %}
+                <div class="prose max-w-none text-lg text-gray-700">
+                    <p>{{ block.text_content|linebreaks }}</p>
+                </div>
+
+            <!-- RENDER: Image Block -->
+            {% elif block.block_type == 'image' and block.image %}
+                <div>
+                    <img src="{{ block.image.url }}" alt="Content image for {{ topic.title }}" class="w-full h-auto max-h-96 object-cover rounded-lg shadow-md">
+                </div>
+
+            <!-- RENDER: Sandbox Block -->
+            {% elif block.block_type == 'sandbox_greenhouse' %}
+                <div class="bg-gray-50 p-6 rounded-lg border">
+                    <p class="text-center text-gray-700 mb-4">Your mission is to create the perfect conditions for photosynthesis. Adjust the inputs below.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                        <div class="flex flex-col items-center"><label for="sunlight" class="font-semibold text-lg">☀️ Sunlight</label><input id="sunlight" type="range" min="0" max="100" value="10" class="w-full mt-2"><span id="sunlight-value" class="text-sm text-gray-600 mt-1">10%</span></div>
+                        <div class="flex flex-col items-center"><label for="co2" class="font-semibold text-lg">💨 Carbon Dioxide</label><input id="co2" type="range" min="0" max="100" value="10" class="w-full mt-2"><span id="co2-value" class="text-sm text-gray-600 mt-1">10%</span></div>
+                        <div class="text-center"><button id="water-button" class="py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors">💧 Water the Plant</button></div>
+                    </div>
+                    <div id="result-display" class="mt-6 text-center p-4 rounded-lg bg-gray-200 text-gray-800 transition-colors duration-500">The plant is waiting for the right conditions...</div>
+                </div>
+
+            <!-- RENDER: Quiz Block -->
+            {% elif block.block_type == 'quiz' %}
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">📝 Knowledge Check</h3>
+                    {% if quiz_results %}
+                    <div id="quiz-results-anchor" class="mb-6 p-4 bg-blue-100 border border-blue-300 rounded-lg text-center"><h3 class="text-2xl font-bold text-blue-800">Your Score</h3><p class="text-4xl font-bold text-blue-600 mt-2">{{ score }} / {{ total_questions }}</p><a href="" class="inline-block mt-4 text-sm text-blue-700 hover:underline">Try Again?</a></div>
+                    {% endif %}
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="space-y-8">
+                            {% for question in quiz_questions %}
+                            <div class="bg-gray-50 p-6 rounded-lg border"><p class="font-semibold text-lg text-gray-800">{{ forloop.counter }}. {{ question.question_text }}</p><div class="mt-4 space-y-3">{% for choice in question.choices_list %}<div class="flex items-center p-3 bg-white rounded-md border border-gray-200 hover:bg-gray-100"><input type="radio" id="choice_{{ question.id }}_{{ forloop.counter0 }}" name="question_{{ question.id }}" value="{{ forloop.counter0 }}" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" required><label for="choice_{{ question.id }}_{{ forloop.counter0 }}" class="ml-3 text-gray-800">{{ choice }}</label></div>{% endfor %}</div></div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-8"><button type="submit" name="submit_quiz" class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">Submit Quiz</button></div>
+                    </form>
+                </div>
+
+            <!-- RENDER: Challenge Block -->
+            {% elif block.block_type == 'challenge' %}
+                 <div>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">🤔 Reverse-Engineer Challenge</h3>
+                    <div id="challenge-results-anchor" class="mb-6">
+                        {% if challenge_results %}
+                        <div class="p-4 rounded-lg {% if challenge_success %}bg-green-100 border-green-300{% else %}bg-red-100 border-red-300{% endif %}">
+                            <p class="font-bold {% if challenge_success %}text-green-800{% else %}text-red-800{% endif %}">{{ challenge_feedback }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-400">
+                            <p class="text-lg text-gray-800">{{ block.text_content }}</p>
+                            <textarea name="challenge_answer" class="w-full mt-4 p-2 border border-gray-300 rounded-md" rows="4" placeholder="Type your explanation here..."></textarea>
+                            <button type="submit" name="submit_challenge" class="mt-4 py-2 px-5 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600">Submit Challenge</button>
+                        </div>
+                    </form>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- JavaScript Logic for the Sandbox Widget -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sandbox = document.querySelector("#sunlight");
+        if (sandbox) {
+            const sunlightSlider = document.getElementById('sunlight');
+            const co2Slider = document.getElementById('co2');
+            const waterButton = document.getElementById('water-button');
+            const resultDisplay = document.getElementById('result-display');
+            const sunlightValueText = document.getElementById('sunlight-value');
+            const co2ValueText = document.getElementById('co2-value');
+            let isWatered = false;
+            function checkConditions() {
+                const sunlight = parseInt(sunlightSlider.value);
+                const co2 = parseInt(co2Slider.value);
+                sunlightValueText.textContent = `${sunlight}%`;
+                co2ValueText.textContent = `${co2}%`;
+                if (sunlight > 80 && co2 > 80 && isWatered) {
+                    resultDisplay.textContent = '✨ Success! Photosynthesis is active!';
+                    resultDisplay.classList.remove('bg-gray-200','text-gray-800');
+                    resultDisplay.classList.add('bg-green-100','text-green-800','font-bold');
+                } else {
+                    resultDisplay.textContent = 'The plant is waiting for the right conditions...';
+                    resultDisplay.classList.remove('bg-green-100','text-green-800','font-bold');
+                    resultDisplay.classList.add('bg-gray-200','text-gray-800');
+                }
+            }
+            sunlightSlider.addEventListener('input', checkConditions);
+            co2Slider.addEventListener('input', checkConditions);
+            waterButton.addEventListener('click', () => {
+                isWatered = true;
+                waterButton.textContent = '💧 Plant is Watered!';
+                waterButton.disabled = true;
+                waterButton.classList.add('bg-gray-400','cursor-not-allowed');
+                checkConditions();
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "topics/base.html" %}
+
+{% block title %}Welcome to The Learning Orbit{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-8">
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-gray-800">The Learning Orbit</h1>
+        <p class="text-xl text-gray-600 mt-2">Your Universe of Knowledge Awaits</p>
+    </header>
+
+    <main>
+        {% if recent_topics %}
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-gray-700 mb-6">🚀 Continue Learning</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for topic in recent_topics %}
+                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-gray-800">{{ topic.title }}</h3>
+                    <p class="text-gray-500 mt-1">{{ topic.grade_level }} - {{ topic.subject }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if featured_topics %}
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-gray-700 mb-6">✨ Featured Topics</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for topic in featured_topics %}
+                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-lg border-2 border-blue-500 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                    <h3 class="text-2xl font-bold text-blue-600">{{ topic.title }}</h3>
+                    <p class="text-gray-500 mt-2">{{ topic.grade_level }} - {{ topic.subject }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <section>
+            <h2 class="text-3xl font-semibold text-gray-700 mb-6">📚 All Topics</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for topic in other_topics %}
+                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-gray-800">{{ topic.title }}</h3>
+                    <p class="text-gray-500 mt-1">{{ topic.grade_level }} - {{ topic.subject }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}
