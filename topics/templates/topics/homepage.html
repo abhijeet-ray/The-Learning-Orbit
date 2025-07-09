@@ -1,54 +1,286 @@
 {% extends "topics/base.html" %}
 
-{% block title %}Welcome to The Learning Orbit{% endblock %}
+{% block title %}Captain's Dashboard | The Learning Orbit{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-8">
-    <header class="text-center mb-12">
-        <h1 class="text-5xl font-bold text-gray-800">The Learning Orbit</h1>
-        <p class="text-xl text-gray-600 mt-2">Your Universe of Knowledge Awaits</p>
+<style>
+    :root {
+        --glow-color: #0ea5e9;
+        --primary-text: #e2e8f0;
+        --secondary-text: #94a3b8;
+        --border-color: rgba(148, 163, 184, 0.3);
+        --bg-color-dark: #0f172a;
+        --bg-color-light: rgba(15, 23, 42, 0.7);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        background-color: var(--bg-color-dark);
+        background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2400');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: var(--primary-text);
+        overflow-x: hidden;
+    }
+
+    /* --- Navigation Bar --- */
+    nav {
+        background-color: rgba(15, 23, 42, 0.5) !important;
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border-color);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 100;
+        height: 60px;
+        transition: background-color 0.3s ease-in-out;
+    }
+    nav.scrolled {
+        background-color: rgba(15, 23, 42, 0.85) !important;
+        backdrop-filter: blur(12px);
+    }
+    nav a { color: var(--primary-text) !important; }
+    nav a:hover { color: var(--glow-color) !important; }
+
+    /* --- Hero & Dashboard --- */
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 80px 2rem 2rem 2rem;
+        background: radial-gradient(circle, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.9) 70%);
+        position: relative;
+    }
+    .dashboard-container {
+        width: 100%;
+        max-width: 600px;
+        aspect-ratio: 1 / 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+    }
+    .central-hub {
+        width: 120px;
+        height: 120px;
+        background: var(--bg-color-light);
+        border-radius: 50%;
+        border: 2px solid var(--border-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+        z-index: 2;
+    }
+    .central-hub svg {
+        width: 60px;
+        height: 60px;
+        color: var(--glow-color);
+    }
+
+    .orbit {
+        position: absolute;
+        border: 1px dashed var(--border-color);
+        border-radius: 50%;
+        animation: slow-spin 60s linear infinite;
+    }
+    .orbit:nth-child(1) { width: 300px; height: 300px; animation-duration: 40s; }
+    .orbit:nth-child(2) { width: 450px; height: 450px; animation-duration: 70s; }
+    .orbit:nth-child(3) { width: 600px; height: 600px; animation-duration: 90s; }
+    
+    .nav-point {
+        position: absolute;
+        width: 150px;
+        text-decoration: none;
+        color: var(--primary-text);
+        transition: transform 0.3s ease;
+        z-index: 2;
+    }
+    .nav-point .icon{width:64px;height:64px;border:2px solid transparent;border-radius:50%;display:flex;justify-content:center;align-items:center;background:var(--bg-color-light);backdrop-filter:blur(5px);margin:0 auto;box-shadow:0 4px 8px rgba(0,0,0,.2);transition:border-color .3s,box-shadow .3s}.nav-point .icon svg{width:32px;height:32px;color:var(--secondary-text);transition:color .3s}.nav-point .title{font-size:1.125rem;font-weight:600;margin-top:.75rem;color:var(--primary-text);transition:color .3s}.nav-point .description{font-size:.875rem;color:var(--secondary-text);margin-top:.25rem}.nav-point:hover .icon,.nav-point:focus-visible .icon{border-color:var(--glow-color);box-shadow:0 0 20px var(--glow-color)}.nav-point:hover .icon svg,.nav-point:focus-visible .icon svg{color:var(--glow-color)}.nav-point:hover .title,.nav-point:focus-visible .title{color:var(--glow-color)}
+    #point-k12{top:0;left:50%;transform:translateX(-50%)}#point-exams{right:0;top:50%;transform:translateY(-50%)}#point-uni{bottom:0;left:50%;transform:translateX(-50%)}#point-tech{left:0;top:50%;transform:translateY(-50%)}
+    .scroll-indicator{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:var(--secondary-text);transition:opacity .3s, color .3s}.scroll-indicator svg{width:24px;height:24px;animation:bounce 2s infinite}.scroll-indicator:hover{opacity:1;color:var(--primary-text)}
+
+    /* --- Content Sections --- */
+    .main-content {
+        background-color: #0b1221;
+        padding: 4rem 2rem 0 2rem;
+        border-top: 1px solid var(--border-color);
+    }
+    .content-section {
+        max-width: 1000px;
+        margin: 0 auto 5rem auto;
+        text-align: center;
+    }
+    .content-section:not(:last-child)::after {
+        content: '◈';
+        display: block;
+        margin-top: 5rem;
+        font-size: 1.5rem;
+        color: var(--border-color);
+    }
+    .content-section h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--primary-text);
+        display: inline-block;
+        border-bottom: 2px solid var(--glow-color);
+        padding-bottom: 0.5rem;
+    }
+    .content-section .subtitle {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: var(--secondary-text);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;margin-top:3rem}.feature-card{background:var(--bg-color-light);border:1px solid var(--border-color);border-radius:.75rem;padding:2rem;text-align:left;transition:transform .3s ease,box-shadow .3s ease}.feature-card:hover{transform:translateY(-10px);box-shadow:0 10px 25px rgba(14,165,233,.2)}.feature-card .icon{width:48px;height:48px;color:var(--glow-color);margin-bottom:1rem}.feature-card h3{font-size:1.5rem;font-weight:600;margin-bottom:.5rem}
+    
+    .testimonial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:3rem;text-align:left}
+    .testimonial-card{background:var(--bg-color-light);border-left:4px solid var(--glow-color);padding:2rem;border-radius:.5rem;position:relative}
+    .testimonial-card::before{content:'“';position:absolute;top:-10px;left:10px;font-size:6rem;font-family:serif;color:var(--border-color);z-index:0;opacity:.5}
+    .testimonial-card .quote,.testimonial-card .author{position:relative;z-index:1}
+    .testimonial-card .quote{font-style:italic;color:var(--primary-text);margin-bottom:1rem}.testimonial-card .author{font-weight:600;color:var(--primary-text)}.testimonial-card .author span{font-weight:400;color:var(--secondary-text);display:block;font-size:.875rem}
+    
+    /* MODIFIED: CTA Section for a more integrated 'terminal' feel */
+    .cta-section {
+        background: var(--bg-color-light);
+        border: 1px solid var(--border-color);
+        padding: 4rem 2rem;
+        margin-top: 4rem;
+        border-radius: 1rem;
+        position: relative;
+    }
+    /* Adds decorative corner brackets */
+    .cta-section::before, .cta-section::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-color: var(--glow-color);
+        border-style: solid;
+    }
+    .cta-section::before {
+        top: 15px;
+        left: 15px;
+        border-width: 2px 0 0 2px;
+    }
+    .cta-section::after {
+        bottom: 15px;
+        right: 15px;
+        border-width: 0 2px 2px 0;
+    }
+    .cta-button {
+        display: inline-block;
+        background-color: var(--glow-color);
+        color: var(--bg-color-dark);
+        padding: 1rem 2.5rem;
+        border-radius: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-decoration: none;
+        margin-top: 2rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px var(--glow-color);
+    }
+    
+    footer{padding:2rem;text-align:center;color:var(--secondary-text);font-size:.875rem}.footer a{color:var(--secondary-text);text-decoration:none;margin:0 .5rem}.footer a:hover{color:var(--glow-color)}
+
+    /* --- Accessibility --- */
+    a:focus-visible, button:focus-visible, [tabindex]:not([tabindex="-1"]):focus-visible {
+        outline: 2px solid var(--glow-color);
+        outline-offset: 3px;
+        border-radius: 0.25rem;
+    }
+    
+    /* --- Keyframe Animations --- */
+    @keyframes slow-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes bounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}60%{transform:translateY(-5px)}}
+</style>
+
+<div class="hero-section">
+    <header class="text-center mb-4">
+        <h1 class="text-5xl md:text-6xl font-bold text-white drop-shadow-lg">Captain's Dashboard</h1>
+        <p class="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">Welcome to The Learning Orbit. All systems are online. Select a destination to engage.</p>
     </header>
 
-    <main>
-        {% if recent_topics %}
-        <section class="mb-12">
-            <h2 class="text-3xl font-semibold text-gray-700 mb-6">🚀 Continue Learning</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for topic in recent_topics %}
-                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300">
-                    <h3 class="text-xl font-bold text-gray-800">{{ topic.title }}</h3>
-                    <p class="text-gray-500 mt-1">{{ topic.grade_level }} - {{ topic.subject }}</p>
-                </a>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+    <div class="dashboard-container">
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+        
+        <div class="central-hub"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg></div>
+        <a href="#" id="point-k12" class="nav-point" tabindex="0"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg></div><div class="title">K-12 Galaxy</div><div class="description">Core subjects & foundational knowledge</div></a>
+        <a href="#" id="point-exams" class="nav-point" tabindex="0"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h12A2.25 2.25 0 0 0 20.25 14.25V3M3.75 14.25v-1.5c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v1.5m-15 0h15M4.5 5.625h15m-15 3h15m-15 3h15" /></svg></div><div class="title">Exam Sector</div><div class="description">Preparation for standardized tests</div></a>
+        <a href="#" id="point-uni" class="nav-point" tabindex="0"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path d="M12 18.375a9.375 9.375 0 1 0 0-18.75 9.375 9.375 0 0 0 0 18.75ZM12 18.375a9.375 9.375 0 0 0 7.965-4.883.375.375 0 0 0-.566-.566A7.875 7.875 0 0 1 12 15.375a7.875 7.875 0 0 1-5.4-2.248.375.375 0 1 0-.566.566A9.375 9.375 0 0 0 12 18.375Z" /></svg></div><div class="title">University Cosmos</div><div class="description">Advanced studies & higher education</div></a>
+        <a href="#" id="point-tech" class="nav-point" tabindex="0"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></div><div class="title">Tech Constellation</div><div class="description">Skills for the digital frontier</div></a>
+    </div>
 
-        {% if featured_topics %}
-        <section class="mb-12">
-            <h2 class="text-3xl font-semibold text-gray-700 mb-6">✨ Featured Topics</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {% for topic in featured_topics %}
-                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-lg border-2 border-blue-500 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                    <h3 class="text-2xl font-bold text-blue-600">{{ topic.title }}</h3>
-                    <p class="text-gray-500 mt-2">{{ topic.grade_level }} - {{ topic.subject }}</p>
-                </a>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
-
-        <section>
-            <h2 class="text-3xl font-semibold text-gray-700 mb-6">📚 All Topics</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for topic in other_topics %}
-                <a href="/topics/{{ topic.id }}/" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300">
-                    <h3 class="text-xl font-bold text-gray-800">{{ topic.title }}</h3>
-                    <p class="text-gray-500 mt-1">{{ topic.grade_level }} - {{ topic.subject }}</p>
-                </a>
-                {% endfor %}
-            </div>
-        </section>
-    </main>
+    <a href="#about-us" class="scroll-indicator"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5" /></svg></a>
 </div>
+
+<main class="main-content">
+    <section id="about-us" class="content-section">
+        <h2>Our Mission</h2>
+        <p class="subtitle">
+            At The Learning Orbit, we believe education is a <strong>voyage of discovery</strong>. Our mission is to provide every learner with a <strong>personalized map</strong> to navigate the vast universe of knowledge. We've built a platform that adapts to your trajectory, providing the tools and guidance needed to explore new concepts, master complex subjects, and confidently <strong>chart a course towards your goals</strong>.
+        </p>
+    </section>
+
+    <section id="what-we-offer" class="content-section">
+        <h2>What We Offer</h2>
+        <div class="feature-grid">
+            <div class="feature-card" tabindex="0"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg><h3>Adaptive Learning Paths</h3><p class="description">Our system analyzes your progress and adjusts your curriculum in real-time, ensuring you're always learning at the most effective pace.</p></div>
+            <div class="feature-card" tabindex="0"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg><h3>Interactive Labs & Sims</h3><p class="description">Go beyond theory with hands-on labs and simulations that bring complex concepts to life in a risk-free digital environment.</p></div>
+            <div class="feature-card" tabindex="0"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m-7.5-2.226A6.698 6.698 0 0 0 6 15.75a6.698 6.698 0 0 0-3.75 1.055 3 3 0 0 0-4.682 2.72a9.094 9.094 0 0 0 3.741.479m7.5-2.226a3.75 3.75 0 0 0-7.5 0v.008c0 .022.002.044.004.065.084.524.148 1.05.22 1.58.04.28.083.559.133.83.083.453.181.896.29 1.323a3.75 3.75 0 0 0 7.5 0v-.008c0-.022-.002-.044-.004-.065-.084-.524-.148-1.05-.22-1.58a6.673 6.673 0 0 0-.133-.83c-.109-.427-.207-.87-.29-1.323Z" /></svg><h3>Expert Mission Control</h3><p class="description">Connect with veteran educators and tutors who provide guidance, answer questions, and ensure your learning voyage is a success.</p></div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="content-section">
+        <h2>Transmissions From The Crew</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card" tabindex="0"><p class="quote">"I finally understood calculus thanks to the interactive sims. It felt less like studying and more like piloting a ship through a math equation. Truly groundbreaking."</p><p class="author">Alex Rivera <span>Aspiring Astrophysicist</span></p></div>
+            <div class="testimonial-card" tabindex="0"><p class="quote">"The adaptive learning path was a game-changer for my exam prep. It zeroed in on my weak spots and turned them into strengths. I've never felt more prepared."</p><p class="author">Priya Singh <span>Future Med Student</span></p></div>
+            <div class="testimonial-card" tabindex="0"><p class="quote">"As a developer, I love the Tech Constellation section. The hands-on labs are better than any documentation. This is the future of up-skilling."</p><p class="author">Ben Carter <span>Software Engineer</span></p></div>
+        </div>
+    </section>
+
+    <section class="cta-section text-center">
+        <h2 class="text-4xl">Your Terminal is Ready.</h2>
+        <p class="subtitle mt-4">Create your free account and unlock a personalized universe of knowledge. The journey starts now.</p>
+        <a href="#" class="cta-button">Launch Your Mission</a>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+    </div>
+    <p class="mt-4">&copy; 2025 The Learning Orbit. All rights reserved.</p>
+</footer>
+
+<script>
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+</script>
+
 {% endblock %}
