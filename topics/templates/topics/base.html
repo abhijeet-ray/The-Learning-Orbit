@@ -1,3 +1,4 @@
+<!-- topics/templates/topics/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,17 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}The Learning Orbit{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a consistent dark theme */
+        body {
+            background-color: #0d1117; /* Deep space blue */
+            color: #e2e8f0; /* Soft white text */
+            font-family: sans-serif;
+        }
+        nav {
+            background-color: rgba(15, 23, 42, 0.5) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        nav a { color: #e2e8f0 !important; }
+        nav a:hover { color: #0ea5e9 !important; }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="min-h-screen">
 
-    <nav class="bg-white shadow-md">
+    <nav class="sticky top-0 z-50">
         <div class="container mx-auto px-6 py-3">
             <div class="flex justify-between items-center">
-                <a href="/" class="text-2xl font-bold text-blue-600">The Learning Orbit 🚀</a>
+                <a href="/" class="text-2xl font-bold">The Learning Orbit 🚀</a>
                 <div class="space-x-4">
-                    <a href="/" class="text-gray-600 hover:text-blue-600">Home</a>
-                    <a href="#" class="text-gray-600 hover:text-blue-600">Subjects</a>
-                    <a href="#" class="text-gray-600 hover:text-blue-600">My Dashboard</a>
+                    <a href="/" class="hover:text-blue-400">Dashboard</a>
+                    <a href="{% url 'k12_galaxy' %}" class="hover:text-blue-400">K-12 Galaxy</a>
                 </div>
             </div>
         </div>

@@ -1,0 +1,108 @@
+{
+    "grade_level": "Class 7",
+    "subjects": [
+      {
+        "name": "Science",
+        "badge_name": "Junior Scientist",
+        "chapters": [
+          "Nutrition in Plants",
+          "Nutrition in Animals",
+          "Fibre to Fabric",
+          "Heat",
+          "Acids, Bases and Salts",
+          "Physical and Chemical Changes",
+          "Weather, Climate and Adaptations of Animals to Climate",
+          "Winds, Storms and Cyclones",
+          "Soil",
+          "Respiration in Organisms",
+          "Transportation in Animals and Plants",
+          "Reproduction in Plants",
+          "Motion and Time",
+          "Electric Current and Its Effects",
+          "Light",
+          "Water: A Precious Resource",
+          "Forests: Our Lifeline",
+          "Wastewater Story"
+        ]
+      },
+      {
+        "name": "Mathematics",
+        "badge_name": "Math Whiz",
+        "chapters": [
+          "Integers",
+          "Fractions and Decimals",
+          "Data Handling",
+          "Simple Equations",
+          "Lines and Angles",
+          "The Triangle and Its Properties",
+          "Congruence of Triangles",
+          "Comparing Quantities",
+          "Rational Numbers",
+          "Practical Geometry",
+          "Perimeter and Area",
+          "Algebraic Expressions",
+          "Exponents and Powers",
+          "Symmetry",
+          "Visualising Solid Shapes"
+        ]
+      },
+      {
+        "name": "Social Studies",
+        "badge_name": "Civic Star",
+        "chapters": [
+          "On Equality",
+          "Role of the Government in Health",
+          "How the State Government Works",
+          "Growing up as Boys and Girls",
+          "Women Change the World",
+          "Understanding Media",
+          "Markets Around Us"
+        ]
+      },
+      {
+        "name": "History",
+        "badge_name": "Time Traveler",
+        "chapters": [
+          "Tracing Changes Through A Thousand Years",
+          "New Kings And Kingdoms",
+          "The Delhi Sultans",
+          "The Mughal Empire",
+          "Rulers And Buildings",
+          "Towns, Traders And Craftspersons",
+          "Tribes, Nomads And Settled Communities",
+          "Devotional Paths To The Divine",
+          "The Making Of Regional Cultures",
+          "Eighteenth-Century Political Formations"
+        ]
+      },
+      {
+        "name": "Geography",
+        "badge_name": "World Explorer",
+        "chapters": [
+          "Environment",
+          "Inside Our Earth",
+          "Our Changing Earth",
+          "Air",
+          "Water",
+          "Natural Vegetation and Wildlife",
+          "Human Environment–Settlement, Transport and Communication",
+          "Human Environment Interactions",
+          "Life in the Deserts"
+        ]
+      },
+      {
+        "name": "Computer Science",
+        "badge_name": "Code Cadet",
+        "chapters": [
+          "Computer Hardware Components",
+          "Introduction to Number Systems",
+          "Computer Memory and Storage",
+          "Basics of Algorithms and Flowcharts",
+          "Introduction to HTML",
+          "More on HTML",
+          "Cyber Safety and Ethics"
+        ]
+      }
+    ]
+  }
+  
